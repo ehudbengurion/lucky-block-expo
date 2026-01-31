@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תערוכת לאקי-בלוק אינטראקטיבית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&family=Heebo:wght@900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #121212;
+            color: white;
+            overflow-x: hidden;
+        }
+        .pixel-font { font-family: 'Heebo', sans-serif; }
+        
+        /* Lucky Block Animation */
+        .lucky-block {
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+        }
+        .lucky-block:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .lucky-block:active {
+            transform: scale(0.9);
+        }
+        
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .reveal-anim {
+            animation: reveal 0.6s ease-out forwards;
+        }
+        @keyframes reveal {
+            0% { transform: scale(0) translateY(50px); opacity: 0; }
+            100% { transform: scale(1) translateY(-20px); opacity: 1; }
+        }
+
+        /* Minecraft Style Borders */
+        .mc-border {
+            border: 4px solid #3f3f3f;
+            background: #c6c6c6;
+            box-shadow: inset -4px -4px #555, inset 4px 4px #fff;
+            padding: 24px;
+            color: #333;
+        }
+
+        .scratch-btn {
+            background-color: #855af2;
+            transition: all 0.2s;
+        }
+        .scratch-btn:hover {
+            background-color: #7248d9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <header class="py-12 bg-gradient-to-b from-yellow-500 to-yellow-600 text-black text-center shadow-2xl relative overflow-hidden">
+        <div class="relative z-10">
+            <h1 class="text-5xl md:text-7xl pixel-font font-black mb-4">תערוכת LUCKY BLOCK</h1>
+            <p class="text-xl md:text-2xl font-bold opacity-90">נסו את מזלכם והיכנסו לפרויקטים של התלמידים!</p>
+        </div>
+        <!-- Decorative blocks in background -->
+        <div class="absolute top-0 right-0 opacity-10 text-9xl">?</div>
+        <div class="absolute bottom-0 left-0 opacity-10 text-9xl">?</div>
+    </header>
+
+    <main class="max-w-6xl mx-auto py-12 px-6">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="gallery">
+            <!-- Projects will be injected here -->
+        </div>
+    </main>
+
+    <!-- Modal for Reveal -->
+    <div id="modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4">
+        <div class="mc-border max-w-sm w-full text-center relative rounded-sm">
+            <button onclick="closeModal()" class="absolute top-2 left-2 font-bold text-2xl text-gray-700 hover:text-black">✕</button>
+            <h2 id="modal-title" class="text-3xl font-black mb-4 pixel-font uppercase">יצא לכם...</h2>
+            
+            <div id="reveal-container" class="h-48 flex items-center justify-center mb-4">
+                <!-- Result Image/Emoji -->
+            </div>
+            
+            <div id="modal-content" class="mb-6">
+                <p id="modal-result-name" class="text-2xl font-black mb-1"></p>
+                <p id="modal-rarity" class="text-lg font-bold text-yellow-700"></p>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <button onclick="closeModal()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xl border-b-4 border-yellow-800 transition-all">
+                    נסה שוב!
+                </button>
+                <a id="scratch-link" href="#" target="_blank" class="w-full py-3 scratch-btn text-white font-black text-xl border-b-4 border-purple-900 flex items-center justify-center gap-2">
+                    <span>לצפייה בפרויקט המלא</span>
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-12 text-center text-gray-500 border-t border-gray-800">
+        <p class="mb-2 italic font-bold text-yellow-600">שימו לב: כל פרויקט נבנה ותוכנת על ידי תלמידי קורס סקראץ'</p>
+        <p>פורים תשפ"ה • חוג מחשבים וקוד</p>
+    </footer>
+
+    <script>
+        // Data structure with scratch URLs
+        const projects = [
+            {
+                id: 1,
+                student: "נועם",
+                theme: "עולם הכדורגל",
+                blockColor: "bg-yellow-400",
+                scratchUrl: "https://scratch.mit.edu/projects/12345678", // כאן שמים את הקישור האמיתי
+                results: [
+                    { name: "מסי", emoji: "⚽", rarity: "נדיר מאוד!" },
+                    { name: "כרטיס אדום", emoji: "🟥", rarity: "אופס..." },
+                    { name: "גביע העולם", emoji: "🏆", rarity: "אגדי!" },
+                    { name: "נעל זהב", emoji: "👟", rarity: "מדהים" }
+                ]
+            },
+            {
+                id: 2,
+                student: "איתי",
+                theme: "סטילהברינרוט",
+                blockColor: "bg-purple-600",
+                scratchUrl: "https://scratch.mit.edu/projects/23456789",
+                results: [
+                    { name: "מפלצת עין", emoji: "👁️", rarity: "מפחיד" },
+                    { name: "יהלום סגול", emoji: "💎", rarity: "נדיר" },
+                    { name: "בוס סופי", emoji: "👺", rarity: "אגדי!" }
+                ]
+            },
+            {
+                id: 3,
+                student: "מאיה",
+                theme: "תחפושות פורים",
+                blockColor: "bg-pink-500",
+                scratchUrl: "https://scratch.mit.edu/projects/34567890",
+                results: [
+                    { name: "ליצן", emoji: "🤡", rarity: "נפוץ" },
+                    { name: "מלכה", emoji: "👑", rarity: "נדיר" },
+                    { name: "חד קרן", emoji: "🦄", rarity: "אגדי!" }
+                ]
+            },
+            {
+                id: 4,
+                student: "דניאל",
+                theme: "גיבורי על",
+                blockColor: "bg-red-600",
+                scratchUrl: "https://scratch.mit.edu/projects/45678901",
+                results: [
+                    { name: "ספיידרמן", emoji: "🕷️", rarity: "נדיר" },
+                    { name: "איירון מן", emoji: "🦾", rarity: "אגדי!" },
+                    { name: "פטיש של ת'ור", emoji: "🔨", rarity: "חזק!" }
+                ]
+            }
+        ];
+
+        function renderGallery() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = projects.map(p => `
+                <div class="bg-gray-800 rounded-3xl p-6 text-center border-b-8 border-black/40 hover:bg-gray-700 transition-all flex flex-col h-full">
+                    <div class="flex-grow">
+                        <h3 class="text-2xl font-black mb-1 text-white">${p.theme}</h3>
+                        <p class="text-yellow-500 mb-6 font-bold italic">היוצר: ${p.student}</p>
+                        
+                        <div class="lucky-block ${p.blockColor} flex items-center justify-center rounded-2xl shadow-inner border-4 border-black/20" 
+                             onclick="openBlock(this, ${p.id})">
+                            <span class="text-6xl text-black/40 font-black">?</span>
+                        </div>
+                        
+                        <p class="mt-6 text-sm text-gray-400 font-bold">לחצו על הקופסה להגרלה</p>
+                    </div>
+                    
+                    <a href="${p.scratchUrl}" target="_blank" class="mt-6 py-2 px-4 scratch-btn text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                        לתוכנית המקורית בסקראץ'
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        function openBlock(element, projectId) {
+            // Shake effect
+            element.classList.add('shake');
+            
+            setTimeout(() => {
+                element.classList.remove('shake');
+                const project = projects.find(p => p.id === projectId);
+                const result = project.results[Math.floor(Math.random() * project.results.length)];
+                
+                showModal(result, project.scratchUrl);
+            }, 500);
+        }
+
+        function showModal(result, url) {
+            const modal = document.getElementById('modal');
+            const container = document.getElementById('reveal-container');
+            const resName = document.getElementById('modal-result-name');
+            const resRarity = document.getElementById('modal-rarity');
+            const scratchLink = document.getElementById('scratch-link');
+            
+            container.innerHTML = `<div class="text-9xl reveal-anim">${result.emoji}</div>`;
+            resName.innerText = result.name;
+            resRarity.innerText = result.rarity;
+            scratchLink.href = url;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        // Run
+        renderGallery();
+    </script>
+</body>
+</html>
