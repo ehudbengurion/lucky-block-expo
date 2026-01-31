@@ -2,8 +2,8 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תערוכת אהוד אינטראקטיבית</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>תערוכת לאקי-בלוק אינטראקטיבית</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&family=Heebo:wght@900&display=swap" rel="stylesheet">
     <style>
@@ -12,23 +12,53 @@
             background-color: #121212;
             color: white;
             overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
         .pixel-font { font-family: 'Heebo', sans-serif; }
         
-        /* Lucky Block Animation */
+        .project-card {
+            background-color: #1e1e1e;
+            transition: all 0.3s ease;
+        }
+        
+        .project-image-container {
+            width: 100%;
+            height: 160px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background-color: #2a2a2a;
+            position: relative;
+        }
+        
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s, transform 0.5s;
+        }
+        
+        .project-card:hover .project-image {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
         .lucky-block {
             cursor: pointer;
             transition: transform 0.2s;
             position: relative;
-            width: 140px;
-            height: 140px;
+            width: 110px;
+            height: 110px;
             margin: 0 auto;
+            touch-action: manipulation;
         }
+        @media (min-width: 768px) {
+            .lucky-block { width: 130px; height: 130px; }
+        }
+        
         .lucky-block:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
-        .lucky-block:active {
-            transform: scale(0.9);
+            transform: scale(1.05) rotate(3deg);
         }
         
         .shake {
@@ -45,16 +75,15 @@
             animation: reveal 0.6s ease-out forwards;
         }
         @keyframes reveal {
-            0% { transform: scale(0) translateY(50px); opacity: 0; }
-            100% { transform: scale(1) translateY(-20px); opacity: 1; }
+            0% { transform: scale(0) translateY(30px); opacity: 0; }
+            100% { transform: scale(1) translateY(-10px); opacity: 1; }
         }
 
-        /* Minecraft Style Borders */
         .mc-border {
             border: 4px solid #3f3f3f;
             background: #c6c6c6;
             box-shadow: inset -4px -4px #555, inset 4px 4px #fff;
-            padding: 24px;
+            padding: 20px;
             color: #333;
         }
 
@@ -64,111 +93,138 @@
         }
         .scratch-btn:hover {
             background-color: #7248d9;
-            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
 
     <!-- Hero Section -->
-    <header class="py-12 bg-gradient-to-b from-yellow-500 to-yellow-600 text-black text-center shadow-2xl relative overflow-hidden">
-        <div class="relative z-10">
-            <h1 class="text-5xl md:text-7xl pixel-font font-black mb-4">תערוכת LUCKY BLOCK</h1>
-            <p class="text-xl md:text-2xl font-bold opacity-90">נסו את מזלכם והיכנסו לפרויקטים של התלמידים!</p>
+    <header class="py-10 md:py-16 bg-gradient-to-b from-yellow-500 to-yellow-600 text-black text-center shadow-2xl relative overflow-hidden">
+        <div class="relative z-10 px-4">
+            <h1 class="text-4xl md:text-7xl pixel-font font-black mb-3 italic uppercase text-shadow">LUCKY BLOCK EXPO</h1>
+            <p class="text-lg md:text-2xl font-bold opacity-90">תערוכת פורים - לחצו על הקופסאות של התלמידים!</p>
         </div>
-        <!-- Decorative blocks in background -->
-        <div class="absolute top-0 right-0 opacity-10 text-9xl">?</div>
-        <div class="absolute bottom-0 left-0 opacity-10 text-9xl">?</div>
+        <div class="absolute top-0 right-0 opacity-10 text-7xl md:text-9xl font-black">?</div>
+        <div class="absolute bottom-0 left-0 opacity-10 text-7xl md:text-9xl font-black">?</div>
     </header>
 
-    <main class="max-w-6xl mx-auto py-12 px-6">
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="gallery">
-            <!-- Projects will be injected here -->
+    <main class="max-w-6xl mx-auto py-8 md:py-12 px-4 md:px-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="gallery">
+            <!-- Projects injected by JS -->
         </div>
     </main>
 
     <!-- Modal for Reveal -->
-    <div id="modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4">
-        <div class="mc-border max-w-sm w-full text-center relative rounded-sm">
-            <button onclick="closeModal()" class="absolute top-2 left-2 font-bold text-2xl text-gray-700 hover:text-black">✕</button>
-            <h2 id="modal-title" class="text-3xl font-black mb-4 pixel-font uppercase">יצא לכם...</h2>
+    <div id="modal" class="fixed inset-0 bg-black/95 z-50 hidden flex items-center justify-center p-4">
+        <div class="mc-border w-full max-w-[320px] md:max-w-sm text-center relative rounded-sm">
+            <button onclick="closeModal()" class="absolute top-1 left-2 font-bold text-3xl text-gray-700">✕</button>
+            <h2 class="text-2xl md:text-3xl font-black mb-4 pixel-font uppercase">יצא לכם...</h2>
             
-            <div id="reveal-container" class="h-48 flex items-center justify-center mb-4">
-                <!-- Result Image/Emoji -->
+            <div id="reveal-container" class="h-36 md:h-48 flex items-center justify-center mb-4">
+                <!-- Result Emoji -->
             </div>
             
-            <div id="modal-content" class="mb-6">
-                <p id="modal-result-name" class="text-2xl font-black mb-1"></p>
-                <p id="modal-rarity" class="text-lg font-bold text-yellow-700"></p>
+            <div class="mb-6">
+                <p id="modal-result-name" class="text-xl md:text-2xl font-black mb-1"></p>
+                <p id="modal-rarity" class="text-md md:text-lg font-bold text-yellow-700"></p>
             </div>
 
             <div class="flex flex-col gap-3">
-                <button onclick="closeModal()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xl border-b-4 border-yellow-800 transition-all">
+                <button onclick="closeModal()" class="w-full py-4 bg-yellow-500 text-black font-black text-xl border-b-4 border-yellow-800 active:transform active:translate-y-1 active:border-b-0">
                     נסה שוב!
                 </button>
-                <a id="scratch-link" href="#" target="_blank" class="w-full py-3 scratch-btn text-white font-black text-xl border-b-4 border-purple-900 flex items-center justify-center gap-2">
-                    <span>לצפייה בפרויקט המלא</span>
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+                <a id="scratch-link" href="#" target="_blank" class="w-full py-3 scratch-btn text-white font-black text-lg border-b-4 border-purple-900 flex items-center justify-center gap-2">
+                    <span>כניסה לפרויקט</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <footer class="py-12 text-center text-gray-500 border-t border-gray-800">
-        <p class="mb-2 italic font-bold text-yellow-600">שימו לב: כל פרויקט נבנה ותוכנת על ידי תלמידי קורס סקראץ'</p>
-        <p>פורים תשפ"ה • חוג מחשבים וקוד</p>
+    <footer class="py-10 text-center text-gray-500 border-t border-gray-800 px-4">
+        <p class="mb-2 italic font-bold text-yellow-600 text-sm md:text-base">נוצר בגאווה על ידי תלמידי קוד וסקראץ' • תשפ"ה</p>
     </footer>
 
     <script>
-        // Data structure with scratch URLs
+        // תמונה של משחקי מחשב (בקר גיימינג) איכותית
+        const BRAINROT_IMAGE = "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80"; 
+
         const projects = [
             {
                 id: 1,
-                student: "נועם",
-                theme: "עולם הכדורגל",
-                blockColor: "bg-yellow-400",
-                scratchUrl: "https://scratch.mit.edu/projects/12345678", // כאן שמים את הקישור האמיתי
+                student: "יונתן ועלמה",
+                theme: "Steal a Brainrot",
+                blockColor: "bg-purple-600",
+                imageUrl: BRAINROT_IMAGE, 
+                scratchUrl: "https://skillz.edu.gov.il/student/crb/projectRunner/39c760dd-2c08-499c-bda9-c7464c5c9f26?authuser=0",
                 results: [
-                    { name: "מסי", emoji: "⚽", rarity: "נדיר מאוד!" },
-                    { name: "כרטיס אדום", emoji: "🟥", rarity: "אופס..." },
-                    { name: "גביע העולם", emoji: "🏆", rarity: "אגדי!" },
-                    { name: "נעל זהב", emoji: "👟", rarity: "מדהים" }
+                    { name: "Skibidi Toilet", emoji: "🚽", rarity: "נפוץ" },
+                    { name: "Sigma Face", emoji: "🗿", rarity: "נדיר" },
+                    { name: "Fanum Tax", emoji: "🍔", rarity: "אגדי!" }
                 ]
             },
             {
                 id: 2,
-                student: "איתי",
-                theme: "סטילהברינרוט",
-                blockColor: "bg-purple-600",
-                scratchUrl: "https://scratch.mit.edu/projects/23456789",
+                student: "מיה והילי",
+                theme: "זמרות",
+                blockColor: "bg-pink-500",
+                imageUrl: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=400&q=80",
+                scratchUrl: "https://skillz.edu.gov.il/student/crb/projectRunner/06ee0a62-6aca-4d36-a3e0-595998b8b262?authuser=0",
                 results: [
-                    { name: "מפלצת עין", emoji: "👁️", rarity: "מפחיד" },
-                    { name: "יהלום סגול", emoji: "💎", rarity: "נדיר" },
-                    { name: "בוס סופי", emoji: "👺", rarity: "אגדי!" }
+                    { name: "טיילור סוויפט", emoji: "🎤", rarity: "אגדי!" },
+                    { name: "ביונסה", emoji: "🐝", rarity: "נדיר" },
+                    { name: "נועה קירל", emoji: "🦄", rarity: "מיוחד" }
                 ]
             },
             {
                 id: 3,
-                student: "מאיה",
-                theme: "תחפושות פורים",
-                blockColor: "bg-pink-500",
-                scratchUrl: "https://scratch.mit.edu/projects/34567890",
+                student: "יונתן ועמית",
+                theme: "כדורגל",
+                blockColor: "bg-yellow-400",
+                imageUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&q=80",
+                scratchUrl: "https://skillz.edu.gov.il/student/crb/projectRunner/5677a2a9-d88a-4ff4-a899-57ded8b8ab95?authuser=0",
                 results: [
-                    { name: "ליצן", emoji: "🤡", rarity: "נפוץ" },
-                    { name: "מלכה", emoji: "👑", rarity: "נדיר" },
-                    { name: "חד קרן", emoji: "🦄", rarity: "אגדי!" }
+                    { name: "מסי", emoji: "⚽", rarity: "אגדי!" },
+                    { name: "רונאלדו", emoji: "🏆", rarity: "נדיר" },
+                    { name: "כרטיס אדום", emoji: "🟥", rarity: "אופס!" }
                 ]
             },
             {
                 id: 4,
-                student: "אהוד",
-                theme: "גיבורי על",
-                blockColor: "bg-red-600",
-                scratchUrl: "https://scratch.mit.edu/projects/45678901",
+                student: "נדב",
+                theme: "Steal a Brainrot",
+                blockColor: "bg-blue-600",
+                imageUrl: BRAINROT_IMAGE,
+                scratchUrl: "https://skillz.edu.gov.il/student/crb/projectRunner/7ad0ecc5-8b72-43a0-9e55-ae6e89d1773f?authuser=0",
                 results: [
-                    { name: "ספיידרמן", emoji: "🕷️", rarity: "נדיר" },
-                    { name: "איירון מן", emoji: "🦾", rarity: "אגדי!" },
-                    { name: "פטיש של ת'ור", emoji: "🔨", rarity: "חזק!" }
+                    { name: "Grimace Shake", emoji: "🥤", rarity: "נדיר" },
+                    { name: "Ohio Power", emoji: "💀", rarity: "אגדי!" },
+                    { name: "Rizzler", emoji: "😏", rarity: "מיוחד" }
+                ]
+            },
+            {
+                id: 5,
+                student: "נדב",
+                theme: "Steal a Brainrot",
+                blockColor: "bg-indigo-600",
+                imageUrl: BRAINROT_IMAGE,
+                scratchUrl: "https://skillz.edu.gov.il/student/crb/projectRunner/266d6e76-7eef-4974-9c41-28d84a2b91c9?authuser=0",
+                results: [
+                    { name: "Gnome", emoji: "🎅", rarity: "נדיר" },
+                    { name: "Pizza Tower", emoji: "🍕", rarity: "מיוחד" },
+                    { name: "Brainrot Mode", emoji: "😵‍💫", rarity: "אגדי!" }
+                ]
+            },
+            {
+                id: 6,
+                student: "יהל",
+                theme: "סדרות טלוויזיה",
+                blockColor: "bg-green-500",
+                imageUrl: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=400&q=80",
+                scratchUrl: "https://skillz.edu.gov.il/student/crb/projectRunner/d4b1158a-c709-4511-baee-fc8ca64c9f9e?authuser=0",
+                results: [
+                    { name: "שלט רחוק", emoji: "📺", rarity: "נפוץ" },
+                    { name: "סדרה בבינג'", emoji: "🍿", rarity: "נדיר" },
+                    { name: "סרט אקשן", emoji: "💥", rarity: "אגדי!" }
                 ]
             }
         ];
@@ -176,35 +232,37 @@
         function renderGallery() {
             const gallery = document.getElementById('gallery');
             gallery.innerHTML = projects.map(p => `
-                <div class="bg-gray-800 rounded-3xl p-6 text-center border-b-8 border-black/40 hover:bg-gray-700 transition-all flex flex-col h-full">
+                <div class="project-card rounded-3xl p-5 text-center border-b-8 border-black/40 flex flex-col h-full overflow-hidden">
+                    
+                    <div class="project-image-container">
+                        <img src="${p.imageUrl}" alt="${p.theme}" class="project-image" onerror="this.src='https://via.placeholder.com/400x160?text=${encodeURIComponent(p.theme)}'">
+                    </div>
+
                     <div class="flex-grow">
-                        <h3 class="text-2xl font-black mb-1 text-white">${p.theme}</h3>
-                        <p class="text-yellow-500 mb-6 font-bold italic">היוצר: ${p.student}</p>
+                        <h3 class="text-xl md:text-2xl font-black mb-1 text-white">${p.theme}</h3>
+                        <p class="text-yellow-500 mb-4 font-bold italic text-sm">היוצר/ים: ${p.student}</p>
                         
                         <div class="lucky-block ${p.blockColor} flex items-center justify-center rounded-2xl shadow-inner border-4 border-black/20" 
                              onclick="openBlock(this, ${p.id})">
-                            <span class="text-6xl text-black/40 font-black">?</span>
+                            <span class="text-5xl text-black/40 font-black">?</span>
                         </div>
                         
-                        <p class="mt-6 text-sm text-gray-400 font-bold">לחצו על הקופסה להגרלה</p>
+                        <p class="mt-4 text-xs text-gray-400 font-bold uppercase tracking-wider italic">לחצו להגרלת דמות</p>
                     </div>
                     
-                    <a href="${p.scratchUrl}" target="_blank" class="mt-6 py-2 px-4 scratch-btn text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2">
-                        לתוכנית המקורית בסקראץ'
+                    <a href="${p.scratchUrl}" target="_blank" class="mt-5 py-3 px-4 scratch-btn text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                        לצפייה בפרויקט המלא
                     </a>
                 </div>
             `).join('');
         }
 
         function openBlock(element, projectId) {
-            // Shake effect
             element.classList.add('shake');
-            
             setTimeout(() => {
                 element.classList.remove('shake');
                 const project = projects.find(p => p.id === projectId);
                 const result = project.results[Math.floor(Math.random() * project.results.length)];
-                
                 showModal(result, project.scratchUrl);
             }, 500);
         }
@@ -216,7 +274,7 @@
             const resRarity = document.getElementById('modal-rarity');
             const scratchLink = document.getElementById('scratch-link');
             
-            container.innerHTML = `<div class="text-9xl reveal-anim">${result.emoji}</div>`;
+            container.innerHTML = `<div class="text-8xl md:text-9xl reveal-anim">${result.emoji}</div>`;
             resName.innerText = result.name;
             resRarity.innerText = result.rarity;
             scratchLink.href = url;
@@ -228,10 +286,9 @@
             document.getElementById('modal').classList.add('hidden');
         }
 
-        // Run
-        renderGallery();
+        window.onload = function() {
+            renderGallery();
+        };
     </script>
 </body>
-
 </html>
-
